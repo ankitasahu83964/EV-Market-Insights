@@ -1,0 +1,897 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>EV Market Insights | Data Analytics Project</title>
+    <meta name="description" content="An interactive Tableau project exploring electric vehicle market performance, battery technologies, customer ratings, manufacturing countries, and regional trends.">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --navy: #111b3c;
+            --blue: #3546a5;
+            --purple: #7856d8;
+            --lavender: #e9e5ff;
+            --light: #f7f8ff;
+            --text: #202b49;
+            --muted: #69738b;
+            --white: #ffffff;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: "Segoe UI", Arial, sans-serif;
+            background: var(--light);
+            color: var(--text);
+            line-height: 1.7;
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+        .navbar {
+            background: var(--navy);
+            color: white;
+            padding: 17px 8%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: white;
+            font-size: 21px;
+            font-weight: 750;
+        }
+
+        .brand-icon {
+            width: 43px;
+            height: 43px;
+            display: grid;
+            place-items: center;
+            border-radius: 13px;
+            background: linear-gradient(135deg, #a99aff, #d9d0ff);
+            color: #18214d;
+            font-size: 24px;
+        }
+
+        .brand span {
+            color: #bcb0ff;
+        }
+
+        .nav-label {
+            color: #d4d9f2;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+        }
+
+        /* Hero section */
+        .hero {
+            position: relative;
+            overflow: hidden;
+            padding: 90px 8% 85px;
+            color: white;
+            background:
+                radial-gradient(ellipse at 90% 15%, rgba(157, 128, 255, 0.32), transparent 34%),
+                radial-gradient(ellipse at 10% 90%, rgba(77, 104, 214, 0.27), transparent 35%),
+                linear-gradient(130deg, #111b3c, #252e70 65%, #44358b);
+        }
+
+        .hero::after {
+            content: "";
+            position: absolute;
+            width: 330px;
+            height: 330px;
+            right: -95px;
+            top: 110px;
+            border: 1px solid rgba(218, 210, 255, 0.23);
+            border-radius: 50%;
+            box-shadow:
+                0 0 0 35px rgba(218, 210, 255, 0.045),
+                0 0 0 75px rgba(218, 210, 255, 0.035);
+            pointer-events: none;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            max-width: 900px;
+        }
+
+        .eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 9px;
+            padding: 8px 15px;
+            margin-bottom: 25px;
+            border-radius: 40px;
+            border: 1px solid rgba(203, 193, 255, 0.4);
+            background: rgba(203, 193, 255, 0.1);
+            color: #d9d0ff;
+            font-size: 12px;
+            font-weight: 750;
+            letter-spacing: 1.4px;
+        }
+
+        .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #c9baff;
+            box-shadow: 0 0 10px #c9baff;
+        }
+
+        .hero h1 {
+            max-width: 850px;
+            font-size: clamp(36px, 5.2vw, 64px);
+            line-height: 1.13;
+            letter-spacing: -1.5px;
+            margin-bottom: 22px;
+        }
+
+        .hero h1 span {
+            color: #c6b9ff;
+        }
+
+        .hero-description {
+            max-width: 720px;
+            margin-bottom: 30px;
+            color: #e0e4fb;
+            font-size: 17px;
+            line-height: 1.9;
+        }
+
+        .buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 14px;
+            margin-bottom: 28px;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 14px 23px;
+            min-height: 53px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 750;
+            transition: 0.25s;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+        }
+
+        .btn-primary {
+            background: #c9bdff;
+            color: #171e49;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+        }
+
+        .btn-primary:hover {
+            background: white;
+        }
+
+        .btn-secondary {
+            color: white;
+            background: rgba(255, 255, 255, 0.07);
+            border: 1px solid rgba(255, 255, 255, 0.45);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .hero-note {
+            color: #d4d9f2;
+            font-size: 13px;
+        }
+
+        .hero-note span {
+            color: #c9bdff;
+            margin-right: 8px;
+        }
+
+        /* Highlights */
+        .highlights {
+            padding: 27px 8%;
+            background: white;
+            border-bottom: 1px solid #e7e9f5;
+        }
+
+        .highlight-grid {
+            max-width: 1100px;
+            margin: auto;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        .highlight {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 13px;
+            padding: 10px;
+        }
+
+        .highlight-icon {
+            width: 47px;
+            height: 47px;
+            flex-shrink: 0;
+            display: grid;
+            place-items: center;
+            background: #efedff;
+            border-radius: 13px;
+            font-size: 22px;
+        }
+
+        .highlight h3 {
+            font-size: 14px;
+            color: var(--navy);
+        }
+
+        .highlight p {
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        /* Shared section styling */
+        .section {
+            padding: 76px 8%;
+        }
+
+        .section-heading {
+            text-align: center;
+            max-width: 740px;
+            margin: 0 auto 40px;
+        }
+
+        .section-tag {
+            display: inline-block;
+            padding: 6px 13px;
+            margin-bottom: 13px;
+            border-radius: 30px;
+            background: #ece9ff;
+            color: #5c48bd;
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: 1.5px;
+        }
+
+        .section-heading h2,
+        .about-content h2 {
+            color: var(--navy);
+            font-size: clamp(27px, 3.5vw, 39px);
+            line-height: 1.3;
+            margin-bottom: 13px;
+        }
+
+        .section-heading p {
+            color: var(--muted);
+            font-size: 15px;
+        }
+
+        /* Project objectives */
+        .objectives {
+            background: white;
+        }
+
+        .objective-grid {
+            max-width: 1050px;
+            margin: auto;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        .objective-card {
+            padding: 25px;
+            border: 1px solid #e8e8f5;
+            border-radius: 15px;
+            background: #fff;
+            transition: 0.25s;
+        }
+
+        .objective-card:hover {
+            border-color: #c5baff;
+            box-shadow: 0 10px 28px rgba(48, 48, 105, 0.08);
+            transform: translateY(-4px);
+        }
+
+        .objective-number {
+            color: var(--purple);
+            font-size: 12px;
+            font-weight: 800;
+            letter-spacing: 1.5px;
+            margin-bottom: 10px;
+        }
+
+        .objective-card h3 {
+            color: var(--navy);
+            font-size: 18px;
+            margin-bottom: 8px;
+        }
+
+        .objective-card p {
+            color: var(--muted);
+            font-size: 14px;
+        }
+
+        /* Dashboard and story cards */
+        .explore {
+            background:
+                radial-gradient(ellipse at 100% 0%, #eeebff, transparent 38%),
+                var(--light);
+        }
+
+        .cards {
+            max-width: 1000px;
+            margin: auto;
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 25px;
+        }
+
+        .card {
+            background: white;
+            border: 1px solid #e4e5f3;
+            border-radius: 18px;
+            padding: 30px;
+            box-shadow: 0 8px 28px rgba(26, 32, 77, 0.045);
+            transition: 0.25s;
+        }
+
+        .card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 18px 38px rgba(26, 32, 77, 0.11);
+            border-color: #bdb0ff;
+        }
+
+        .card-icon {
+            width: 60px;
+            height: 60px;
+            display: grid;
+            place-items: center;
+            margin-bottom: 22px;
+            border-radius: 16px;
+            background: linear-gradient(135deg, #ece9ff, #f7f4ff);
+            font-size: 29px;
+        }
+
+        .card h3 {
+            color: var(--navy);
+            font-size: 23px;
+            margin-bottom: 10px;
+        }
+
+        .card p {
+            color: var(--muted);
+            font-size: 14px;
+            margin-bottom: 23px;
+        }
+
+        .card-link {
+            color: #5b47bf;
+            font-size: 14px;
+            font-weight: 800;
+        }
+
+        .card-link span {
+            display: inline-block;
+            transition: transform 0.2s;
+        }
+
+        .card-link:hover span {
+            transform: translateX(5px);
+        }
+
+        /* Methodology */
+        .method-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            max-width: 1050px;
+            margin: auto;
+        }
+
+        .method-card {
+            padding: 23px 18px;
+            border-radius: 14px;
+            background: white;
+            border: 1px solid #e7e8f3;
+            text-align: center;
+        }
+
+        .method-card .symbol {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .method-card h3 {
+            font-size: 15px;
+            color: var(--navy);
+            margin-bottom: 6px;
+        }
+
+        .method-card p {
+            font-size: 12px;
+            color: var(--muted);
+        }
+
+        /* About */
+        .about {
+            padding-top: 0;
+        }
+
+        .about-box {
+            max-width: 1050px;
+            margin: auto;
+            display: grid;
+            grid-template-columns: 0.7fr 1.3fr;
+            gap: 32px;
+            align-items: center;
+            padding: 35px;
+            border-radius: 20px;
+            background: linear-gradient(125deg, #e9e7ff, #f2f4ff);
+            border: 1px solid #dedbff;
+        }
+
+        .about-mark {
+            min-height: 190px;
+            display: grid;
+            place-items: center;
+            border-radius: 17px;
+            background: linear-gradient(140deg, #192450, #5642a8);
+            color: #d6ccff;
+            font-size: 68px;
+        }
+
+        .about-content p {
+            color: #5e6985;
+            font-size: 14px;
+            margin-bottom: 13px;
+        }
+
+        .tech-label {
+            display: inline-block;
+            margin: 5px 5px 0 0;
+            padding: 6px 11px;
+            border-radius: 20px;
+            background: white;
+            color: #5545a3;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        /* Expected outcome */
+        .outcome {
+            background: white;
+        }
+
+        .outcome-box {
+            max-width: 1000px;
+            margin: auto;
+            padding: 35px;
+            border-radius: 18px;
+            background: #171f49;
+            color: white;
+            text-align: center;
+        }
+
+        .outcome-box h2 {
+            font-size: 27px;
+            margin-bottom: 12px;
+        }
+
+        .outcome-box p {
+            max-width: 760px;
+            margin: auto;
+            color: #d9def8;
+            font-size: 14px;
+        }
+
+        footer {
+            padding: 30px 8%;
+            text-align: center;
+            background: #0d1532;
+            color: #d8dcf3;
+        }
+
+        footer strong {
+            color: #c9bdff;
+        }
+
+        footer p {
+            margin: 5px 0;
+            font-size: 13px;
+        }
+
+        @media (max-width: 750px) {
+            .navbar {
+                justify-content: center;
+                text-align: center;
+            }
+
+            .hero {
+                padding: 65px 6%;
+            }
+
+            .hero h1 {
+                letter-spacing: -0.8px;
+            }
+
+            .hero-description {
+                font-size: 15px;
+            }
+
+            .buttons {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .btn {
+                width: 100%;
+            }
+
+            .highlight-grid {
+                grid-template-columns: 1fr;
+                gap: 7px;
+            }
+
+            .highlight {
+                justify-content: flex-start;
+            }
+
+            .section {
+                padding: 60px 6%;
+            }
+
+            .objective-grid,
+            .cards {
+                grid-template-columns: 1fr;
+            }
+
+            .method-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .about {
+                padding-top: 0;
+            }
+
+            .about-box {
+                grid-template-columns: 1fr;
+                padding: 23px;
+            }
+
+            .about-mark {
+                min-height: 125px;
+            }
+
+            .outcome-box {
+                padding: 28px 22px;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            html {
+                scroll-behavior: auto;
+            }
+
+            *, *::before, *::after {
+                transition: none !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header class="navbar">
+        <a class="brand" href="#">
+            <div class="brand-icon">&#9889;</div>
+            <div>EV <span>Market Insights</span></div>
+        </a>
+        <div class="nav-label">Data Analytics Project</div>
+    </header>
+
+    <main>
+
+        <!-- Hero -->
+        <section class="hero">
+            <div class="hero-content">
+                <div class="eyebrow">
+                    <span class="dot"></span>
+                    ELECTRIC VEHICLE MARKET ANALYSIS
+                </div>
+
+                <h1>
+                    Exploring the Future of
+                    <span>Electric Mobility.</span>
+                </h1>
+
+                <p class="hero-description">
+                    Electric Vehicle Market Performance &amp; Insights is a
+                    data analytics project designed to explore EV market
+                    trends, battery technologies, customer ratings,
+                    manufacturing countries, and regional performance through
+                    interactive Tableau visualizations.
+                </p>
+
+                <div class="buttons">
+                    <a class="btn btn-primary"
+                       href="https://public.tableau.com/app/profile/ankita.sahu5560/viz/EVDashboard_17932128223110/ElectricVehicleMarketPerformanceInsights?publish=yes"
+                       target="_blank" rel="noopener noreferrer">
+                        &#128202; View Dashboard &#8594;
+                    </a>
+
+                    <a class="btn btn-secondary"
+                       href="https://public.tableau.com/app/profile/ankita.sahu5560/viz/EVMarketPerformanceStory/Story1?publish=yes"
+                       target="_blank" rel="noopener noreferrer">
+                        &#128214; View Story &amp; Insights &#8594;
+                    </a>
+                </div>
+
+                <div class="hero-note">
+                    <span>&#10003;</span>
+                    Interactive visualization · Data exploration · Tableau
+                </div>
+            </div>
+        </section>
+
+        <!-- Highlights -->
+        <section class="highlights">
+            <div class="highlight-grid">
+                <div class="highlight">
+                    <div class="highlight-icon">&#128202;</div>
+                    <div>
+                        <h3>Market Performance</h3>
+                        <p>Explore trends and comparisons</p>
+                    </div>
+                </div>
+
+                <div class="highlight">
+                    <div class="highlight-icon">&#128161;</div>
+                    <div>
+                        <h3>Battery Technologies</h3>
+                        <p>Understand EV technology</p>
+                    </div>
+                </div>
+
+                <div class="highlight">
+                    <div class="highlight-icon">&#127758;</div>
+                    <div>
+                        <h3>Regional Insights</h3>
+                        <p>Explore market distribution</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Project overview -->
+        <section class="section objectives">
+            <div class="section-heading">
+                <div class="section-tag">PROJECT OVERVIEW</div>
+                <h2>What Is This Project About?</h2>
+                <p>
+                    This project uses data visualization to make electric
+                    vehicle market information easier to explore, compare,
+                    and understand.
+                </p>
+            </div>
+
+            <div class="objective-grid">
+                <article class="objective-card">
+                    <div class="objective-number">01 / MARKET ANALYSIS</div>
+                    <h3>Understand Market Performance</h3>
+                    <p>
+                        Explore the available data to identify patterns in
+                        electric vehicle performance and compare market
+                        indicators through visual charts.
+                    </p>
+                </article>
+
+                <article class="objective-card">
+                    <div class="objective-number">02 / TECHNOLOGY</div>
+                    <h3>Explore Battery Technologies</h3>
+                    <p>
+                        Examine battery technology categories represented
+                        in the dataset and understand how they contribute
+                        to the broader EV landscape.
+                    </p>
+                </article>
+
+                <article class="objective-card">
+                    <div class="objective-number">03 / CUSTOMER INSIGHTS</div>
+                    <h3>Study Customer Ratings</h3>
+                    <p>
+                        Review customer rating information in the dataset
+                        to explore user feedback and compare available
+                        vehicle-related indicators.
+                    </p>
+                </article>
+
+                <article class="objective-card">
+                    <div class="objective-number">04 / REGIONAL TRENDS</div>
+                    <h3>Compare Countries and Regions</h3>
+                    <p>
+                        Explore manufacturing countries and regional
+                        distributions to understand how the available
+                        market data varies across locations.
+                    </p>
+                </article>
+            </div>
+        </section>
+
+        <!-- Dashboard and story -->
+        <section class="section explore">
+            <div class="section-heading">
+                <div class="section-tag">INTERACTIVE EXPERIENCE</div>
+                <h2>Explore the Visualizations</h2>
+                <p>
+                    Choose the dashboard for visual exploration or the
+                    story for a guided presentation of the analysis.
+                </p>
+            </div>
+
+            <div class="cards">
+                <article class="card">
+                    <div class="card-icon">&#128202;</div>
+                    <h3>Interactive Dashboard</h3>
+                    <p>
+                        View interactive charts that help explore EV market
+                        performance, battery types, customer ratings,
+                        manufacturing countries, and regional trends.
+                        Use the dashboard to examine the information
+                        presented in your Tableau visualization.
+                    </p>
+
+                    <a class="card-link"
+                       href="https://public.tableau.com/app/profile/ankita.sahu5560/viz/EVDashboard_17932128223110/ElectricVehicleMarketPerformanceInsights?publish=yes"
+                       target="_blank" rel="noopener noreferrer">
+                        Open Dashboard <span>&#8594;</span>
+                    </a>
+                </article>
+
+                <article class="card">
+                    <div class="card-icon">&#128214;</div>
+                    <h3>Story &amp; Insights</h3>
+                    <p>
+                        Follow a visual story that presents the analysis
+                        step by step. Explore the charts and their context
+                        to understand key observations from the electric
+                        vehicle market dataset.
+                    </p>
+
+                    <a class="card-link"
+                       href="https://public.tableau.com/app/profile/ankita.sahu5560/viz/EVMarketPerformanceStory/Story1?publish=yes"
+                       target="_blank" rel="noopener noreferrer">
+                        Read the Story <span>&#8594;</span>
+                    </a>
+                </article>
+            </div>
+        </section>
+
+        <!-- Methodology -->
+        <section class="section">
+            <div class="section-heading">
+                <div class="section-tag">PROJECT APPROACH</div>
+                <h2>How the Project Works</h2>
+                <p>
+                    A simple data analytics workflow for transforming
+                    market data into visual insights.
+                </p>
+            </div>
+
+            <div class="method-grid">
+                <article class="method-card">
+                    <div class="symbol">&#128196;</div>
+                    <h3>Data Understanding</h3>
+                    <p>Review the available dataset and its variables.</p>
+                </article>
+
+                <article class="method-card">
+                    <div class="symbol">&#128270;</div>
+                    <h3>Data Exploration</h3>
+                    <p>Explore categories, comparisons, and patterns.</p>
+                </article>
+
+                <article class="method-card">
+                    <div class="symbol">&#128200;</div>
+                    <h3>Visualization</h3>
+                    <p>Present the information through Tableau charts.</p>
+                </article>
+
+                <article class="method-card">
+                    <div class="symbol">&#128218;</div>
+                    <h3>Insights</h3>
+                    <p>Communicate observations through a visual story.</p>
+                </article>
+            </div>
+        </section>
+
+        <!-- About and technology -->
+        <section class="section about">
+            <div class="about-box">
+                <div class="about-mark">&#9889;</div>
+
+                <div class="about-content">
+                    <div class="section-tag">ABOUT THE PROJECT</div>
+                    <h2>Turning EV Data into Meaningful Insights</h2>
+
+                    <p>
+                        The electric vehicle industry is evolving with
+                        developments in vehicle design, battery technology,
+                        and changing customer expectations. This project
+                        provides a visual way to explore selected aspects
+                        of that market using the data available in the
+                        project dataset.
+                    </p>
+
+                    <p>
+                        The dashboard supports visual exploration, while
+                        the story helps communicate the analysis in a
+                        structured and accessible format. The goal is to
+                        make market information easier to interpret and
+                        support data-informed discussion.
+                    </p>
+
+                    <div>
+                        <span class="tech-label">Tableau Public</span>
+                        <span class="tech-label">Data Visualization</span>
+                        <span class="tech-label">Market Analysis</span>
+                        <span class="tech-label">Interactive Dashboard</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Expected outcome -->
+        <section class="section outcome">
+            <div class="outcome-box">
+                <h2>Project Goal &amp; Expected Outcomes</h2>
+                <p>
+                    The project aims to present electric vehicle market data
+                    in a clear, visual, and accessible way. Through the
+                    dashboard and story, users can explore available
+                    indicators, compare categories, identify patterns, and
+                    develop a better understanding of the EV market.
+                    The project also demonstrates the use of Tableau to
+                    communicate data analysis through interactive
+                    visualizations.
+                </p>
+            </div>
+        </section>
+
+    </main>
+
+    <footer>
+        <p><strong>EV Market Insights</strong></p>
+        <p>Electric Vehicle Market Performance &amp; Insights</p>
+        <p>Data Analytics with Tableau | Project Portfolio</p>
+    </footer>
+
+</body>
+</html>
